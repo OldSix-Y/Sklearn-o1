@@ -1,0 +1,80 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.preprocessing import StandardScaler
+from mpl_toolkits.mplot3d import Axes3D
+
+# Load the iris dataset
+iris = load_iris()
+
+# Create a dataframe from the iris dataset
+X = pd.DataFrame(iris.data, columns=iris.feature_names)
+y = pd.Series(iris.target)
+
+
+
+# Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Scale the features
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train) 
+X_test = scaler.transform(X_test)
+
+# Create a KNN classifier with k=3
+knn = KNeighborsClassifier(n_neighbors=3)
+
+# Train the model on the training set
+knn.fit(X_train, y_train)   
+
+# Make predictions on the testing set
+y_pred = knn.predict(X_test)
+
+# Calculate the accuracy of the model
+accuracy = accuracy_score(y_test, y_pred)   
+print("Accuracy:", accuracy)     
+
+# Plot Visualizatio of the data
+plt.figure(figsize=(10,6))
+scatter = plt.scatter(X_test[:, 0],  # 使用测试数据
+                     X_test[:, 1],
+                     c=y_pred,
+                     cmap='viridis',
+                     marker='o',
+                     s=100,
+                     edgecolor='k',
+                     label='Predictions')
+
+scatter = plt.scatter(X_test[:, 0],  # 使用测试数据
+                     X_test[:, 1],
+                     cmap='viridis',
+                     c=y_test,
+                     marker='D',
+                     s=100,
+                     label='Actual')
+
+
+plt.title('KNN Classification (k=3)')
+plt.xlabel(iris.feature_names[0])
+plt.ylabel(iris.feature_names[1])
+plt.legend(['Predicted' , 'Actual'])
+plt.show()
+
+
+# Plot Visualizatio of the data in 3D
+
+
+fig = plt.figure(figsize=(12,8))
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X_test[:,0], X_test[:,1], X_test[:,2], c=y_pred, cmap='viridis')
+ax.set_xlabel(iris.feature_names[0])
+ax.set_ylabel(iris.feature_names[1])
+ax.set_zlabel(iris.feature_names[2])
+plt.title('KNN Classification (k=3)')
+plt.show()
+
